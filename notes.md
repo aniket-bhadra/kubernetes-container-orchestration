@@ -531,3 +531,82 @@ That’s why many teams just **host databases outside Kubernetes**, and only run
 Deployment: Manages stateless pod replicas
 StatefulSet: For stateful apps (e.g., databases).
 
+
+### imp concepts
+API server is the only entry point to the Kubernetes cluster.
+So we send configuration requests via Kubernetes dashboard (GUI), CLI, or API to the API server.
+These requests are either in JSON format or `.yml` format.
+Configuration requests in Kubernetes are **declarative** —
+we declare what our **desired outcome** is to Kubernetes,
+and Kubernetes tries to **fulfill those desires**.
+Example — if desired state = 2 pods and 1 pod crashes, Kubernetes spins up **automatically** another pod to meet that desire.
+
+---
+
+### k8s configuration file
+
+### 🔸 Q: Now How Do we create each Kubernetes component?
+
+we create a **separate YAML file** (or sometimes combine them in one file) for **each component** we want to use in our cluster.
+so Each component in Kubernetes = needs its own config (YAML file), where you define exactly how that component should work. 🙌
+---
+
+### 🔹 Example 1: You want to use **Ingress**
+
+* You write an **Ingress YAML file**
+* In it, you define:
+
+  * the **DNS name** (like `myapp.com`)
+  * and which **Service** it should forward traffic to
+
+
+### 🔹 Example 2: You want to use **Volume / Persistent Storage**
+
+* You create a **PersistentVolumeClaim (PVC)** YAML file
+* And in your **Pod/Deployment YAML**, you reference that PVC
+* You tell K8s:
+
+  > “I want this pod’s data stored in this volume path.”
+
+📄 So you need:
+
+1. `pvc.yaml` → to request storage
+2. `deployment.yaml` → to mount that volume into a pod
+
+---
+### example 3: you want to use **Deployment**
+
+* In a **Deployment config file**, you define:
+
+  * **How many pods** you want (replicas)
+  * **Which container image** to use (like nginx, MongoDB, etc.)
+  * What to do **if a pod crashes** (K8s auto-restarts it)
+  * Basically — “I want these many pods of my app/db running all the time.”
+
+📦 So with **Deployment config**, you're saying:
+
+> “Run 3 pods of my app and keep them alive always.”
+
+✅ So yes — it’s for **defining and managing pods** of your app, database, etc.
+
+### example 4: you want to use **Service**
+In this config file, you define:
+
+  * What **pods** it should point to (using `selector`)
+  * What **port** to expose
+  * What type of service (ClusterIP, NodePort, LoadBalancer)
+
+📡 So with **Service config**, you're saying:
+
+> “Create a service that always knows where my pods are — give it a fixed DNS/IP — and forward traffic to those pods.”
+
+
+### ✅ So yes — this is how you think in K8s:
+
+* Need a **Deployment**? → `deployment.yaml`
+* Need a **Service**? → `service.yaml`
+* Need an **Ingress**? → `ingress.yaml`
+* Need a **Volume**? → `pvc.yaml`
+* Need config/secrets? → `configmap.yaml`, `secret.yaml`
+
+---
