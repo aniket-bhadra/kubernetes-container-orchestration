@@ -679,3 +679,24 @@ We store Kubernetes configuration files:
 So it's version-controlled with your code- best practice ✅
 
  
+ ### how to scale in kubernetes?
+
+#### imp concept:
+ Ingress itself is not a pod, but to work, it needs an Ingress Controller, and that runs as a pod inside the cluster.
+So:
+   Ingress = configuration (rules, DNS mapping).
+   Ingress Controller = pod that reads those rules and routes traffic accordingly
+
+#### scaling:
+The scheduler component inside the control plane assigns the pod to each node based on the RAM and CPU left in each node — basically, the least busy node. This way, it assigns pods to nodes. But once the pod is assigned to a node and the pod is running, the scheduler’s job is done.
+
+Now, if 10 million users hit the URL my-app.com, they actually hit the Ingress component first. The Ingress component then forwards the request to the Service. The Service now decides, based on the load of the running pods, how many users to forward to which pod. This is how the Service balances the load.
+
+But the problem is: those 10 million users hit the Ingress first — and Ingress itself runs as a pod. So if 10 million users hit a single Ingress pod at the same time, it could crash, because the load balancing happens only after the Ingress forwards the traffic to the Service. But before that, the Ingress has to handle and forward all of it.
+
+So, how does the Ingress handle 10 million users at the same time?
+
+To solve this, we first create multiple Ingress pods and then use the cloud provider's external load balancer.
+so now,
+User types my-app.com → DNS points to cloud LoadBalancer
+Now, if 10 million users hit the URL my-app.com, they actually hit the cloud LoadBalancer first. The LoadBalancer then distributes traffic across multiple Ingress pods (because Ingress itself runs as pods!). Each Ingress pod forwards requests to the Service, which balances load across app pods.
