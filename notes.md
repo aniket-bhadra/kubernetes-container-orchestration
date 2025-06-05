@@ -1075,8 +1075,73 @@ spec:
       emptyDir: {}
 ---
 
+* **ConfigMap & Secret must exist before Deployments**, as Deployments refer to them.
+
+* Create components using YAML files:
+  `kubectl apply -f <file-name.yaml>`
+
+* **To see how many components are running (except ConfigMap and Secret):**
+  `kubectl get all`
+
+* **To see ConfigMap & Secret:**
+  `kubectl get configmap`
+  `kubectl get secret`
+
+* **To see how many pods are running:**
+  `kubectl get pod`
+
+* `kubectl get componentName`
+  → Shows which components are running (basic info)
+
+* `kubectl get componentName -o wide`
+  → Shows more details of those components
+
+* **To get detailed info of a specific component instance:**
+  `kubectl describe service webapp-service`
+  `kubectl describe pod webapp-deployment-5788c44df-k64vw`
+
+* **To view logs of a container (for errors/debugging):**
+  `kubectl logs podName`
+  `kubectl logs webapp-deployment-5788c44df-k64vw`
+
+* **To stream logs live:**
+  `kubectl logs webapp-deployment-5788c44df-k64vw -f`
+
+---
+
+### To access the web application from browser:
+
+* First list all services:
+  `kubectl get services`
+  → From this, find the **NodePort** and note the **port**
+
+* That port must be accessed on the **node IP** where the pod is running.
+
+* In **Minikube**, there is only one node (control + worker), so just get its IP:
+  `minikube ip`
+
+* Now open the app in browser using:
+  `http://<minikube-ip>:<node-port>`
+
+---
+
+**Q: What if multiple worker nodes exist?**
+
+**Ans:**
+Yes, you need the **IP of the node where the pod is running**.
+✔ Step 1: `kubectl get pods -o wide` → see which node the pod is on
+✔ Step 2: `kubectl get nodes -o wide` → get that node's IP
+✔ Step 3: Use `http://<node-ip>:<node-port>` to access the app.
+
+
+When using Docker driver, Minikube runs inside a container, so the node IP (from minikube ip) isn’t directly reachable from your host.
+run-
+minikube service <service-name> 
+this handles the port forwarding for you.
+
 ### docker-compose.yml vs kubernetes .yml files
 With docker-compose.yml, we create multiple containers at once using just one file and one command. Once all the containers are up, Docker Compose’s job is done—it’s mostly used in development because, in production, Docker Compose isn’t as useful. There’s no need to spin up multiple containers just to replicate the environment.
 
 But Kubernetes YAML files are for interacting with Kubernetes. They’re used to scale containers up and down after development, when we deploy the app with proper scaling. During development, these YAML files don’t really get used—they’re for testing or deployment, not for building the app itself.
+
 
