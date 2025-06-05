@@ -456,6 +456,9 @@ Or services from different apps (e.g., blog.myapp.com, shop.myapp.com)
 
 It doesn't matter — Ingress can handle both
 
+so, Ingress does not provide dns names to services.
+Ingress just forwards the request to the right service based on the path (like /api) or host.
+
 
 But here's the catch: this endpoint is often **hardcoded inside the app image**. So if the service name changes, I now need to:
 
@@ -801,4 +804,71 @@ Service can forward traffic to any matching pod, on any Node (same or different)
 But when a Node forwards traffic to an Ingress pod, it picks an Ingress pod running on the same Node only.
 
 Pods get dynamic IPs (change if pod restarts).Service gives one stable, virtual IP (ClusterIP) for a group of pods.The Service IP (ClusterIP) is internal-only inside the cluster.So external traffic goes via the Node's IP + NodePort.
+---
+
+### minikube
+When you install Minikube with Docker driver, it simply means:
+
+Minikube runs the Kubernetes cluster inside Docker containers on your system.
+
+What it actually does:
+Creates a container (or multiple) that acts as a Kubernetes node.
+Runs Kubernetes components (like kubelet, API server, etc.) inside that container.
+Uses Docker network and storage.
+
+Each node in Minikube corresponds to a separate container when using the Docker driver.
+
+### Running Minikube:
+```bash
+minikube start --driver=docker
+```
+This starts Minikube **inside one container**.  
+Inside that container:
+➡️ **1 Kubernetes node** that acts as both **Control Plane + Worker**.
+
+### Adding More Nodes to an Existing Cluster:
+```bash
+minikube node add
+```
+Each execution of `minikube node add` provisions **one additional worker node** in your existing cluster.  
+Running it **twice** will bring the total to **previous node count + 2 more**.
+
+### Creating a New Cluster with 4 Nodes:
+```bash
+minikube start --nodes=3 --driver=docker
+```
+Before running this, **delete the previous cluster** to avoid adding nodes unintentionally:
+```bash
+minikube delete
+```
+Otherwise, it **may add nodes to the existing cluster** instead of starting fresh.
+
+### Node Assignments in a Multi-Node Minikube Cluster:
+When multiple nodes are running, Minikube **automatically assigns roles**:
+- **1 Control Plane**
+- **Remaining nodes as Workers**  
+For example, with **3 nodes**, Minikube assigns:
+✔️ **1 Control Plane**  
+✔️ **2 Worker Nodes**
+
+### Checking Active Nodes:
+```bash
+kubectl get nodes
+```
+This command will list all nodes currently part of your cluster.
+---
+- Minikube CLI – Used for starting up or deleting the cluster.
+- kubectl CLI – Used for configuring the Minikube cluster.
+If the cluster is not running, kubectl commands (e.g., kubectl get pods) will fail because there’s no API server to talk to.
+
+
+minikube start will:
+
+- Start the existing cluster if it's already created but stopped.
+- Create and start a new cluster with the previously provided driver only if no cluster exists yet.
+
+On first run (minikube start without a specified driver):
+
+- Minikube auto-detects an available driver (Docker, VirtualBox, etc.).
+- If no driver is found, it errors out and prompts you to specify one manually.
 ---
