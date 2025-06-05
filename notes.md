@@ -1074,3 +1074,9 @@ spec:
     - name: mongo-data
       emptyDir: {}
 ---
+
+### docker-compose.yml vs kubernetes .yml files
+With docker-compose.yml, we create multiple containers at once using just one file and one command. Once all the containers are up, Docker Compose’s job is done—it’s mostly used in development because, in production, Docker Compose isn’t as useful. There’s no need to spin up multiple containers just to replicate the environment.
+
+But Kubernetes YAML files are for interacting with Kubernetes. They’re used to scale containers up and down after development, when we deploy the app with proper scaling. During development, these YAML files don’t really get used—they’re for testing or deployment, not for building the app itself.
+
