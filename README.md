@@ -1,3 +1,46 @@
+# Kubernetes Complete Guide
+
+## Table of Contents
+1. [Introduction](#intro)
+   - [Core Problems Kubernetes Solves](#intro)
+2. [Kubernetes Architecture](#-kubernetes-architecture-super-crisp-flow)
+   - [Control Plane](#1️⃣-control-plane-the-brain-of-kubernetes)
+   - [Worker Node](#2️⃣-worker-node-where-containers-actually-run)
+3. [Kubernetes Watch Mechanism](#-what-happens-under-the-hood)
+   - [Step-by-Step Flow: Run 2 Nginx Pods](#step-by-step-simplified-flow--you-say-run-2-nginx-pods)
+   - [Scale Down Flow](#now-if-you-say-run-1-nginx-pod-scale-down)
+   - [When a Pod Crashes](#when-a-pod-or-container-crashes)
+4. [Cloud Controller Manager](#6️⃣-cloud-controller-manager-ccm--handles-cloud-specific-stuff)
+5. [Scheduler as Workload Balancer](#-3-scheduler--load-balancer)
+6. [Main Kubernetes Components](#main-kubernetes-components-explained-simply-and-to-the-point)
+   - [Node & Pod](#main-kubernetes-components-explained-simply-and-to-the-point)
+   - [Service](#service)
+   - [Ingress](#ingress)
+   - [ConfigMap](#configmap)
+   - [Secret](#secret)
+   - [Volumes](#volumes)
+   - [Deployment](#deployment)
+   - [StatefulSet](#statefulset)
+7. [Cluster, Minikube & Kind](#minikube)
+   - [Minikube Commands](#running-minikube)
+   - [kubectl CLI](#minikube)
+8. [Kubernetes Configuration Files](#-configuration-file-details)
+   - [3 Parts of Every Config File](#3-parts-of-k8s-configuration-file)
+   - [Deployment YAML](#deployment)
+   - [Service YAML](#-service)
+   - [External Access via NodePort](#-external-access-nodeport)
+9. [Scaling in Kubernetes](#scaling)
+   - [10M Users Traffic Flow](#-10m-users--traffic-flow-in-kubernetes)
+   - [Horizontal Pod Autoscaler (HPA)](#auto-scale-based-on-trafficload)
+10. [Important Concepts & Best Practices](#imp-concepts)
+    - [docker-compose.yml vs Kubernetes YAML](#docker-composeyml-vs-kubernetes-yml-files)
+    - [Kubernetes in Real Life](#kubernetes-in-real-life)
+    - [Connecting Pods Running Different Applications](#connecting-pods-running-different-application)
+    - [Self Healing](#self-healing)
+11. [kubectl Commands](#to-access-the-web-application-from-browser)
+
+---
+
 ## intro
 If I use AWS ECS for container orchestration, migrating to another cloud provider like GCP or DigitalOcean later may be difficult, as I might need to rewrite the deployment code for each provider. However, Kubernetes offers a common interface for container orchestration, making it cloud-agnostic. This allows me to run and migrate my applications across different cloud providers with minimal changes.
 
